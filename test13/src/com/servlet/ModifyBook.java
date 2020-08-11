@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -13,11 +14,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/bs")
-public class BookServlet extends HttpServlet {
+
+@WebServlet("/mb")
+public class ModifyBook extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-   
+    
+	   
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
     	response.setContentType("text/html; charset=UTF-8");
@@ -28,31 +30,31 @@ public class BookServlet extends HttpServlet {
 		String id="nhoney",pw="nhoney";
 		
 		Connection con=null;
-		Statement stmt=null;
-		ResultSet res= null;
+		PreparedStatement pstmt=null;
 		
 		try {
 			Class.forName(driver);
 			
 			con=DriverManager.getConnection(url,id,pw);
-			stmt=con.createStatement();
-			String sql="SELECT * FROM book";
-			res=stmt.executeQuery(sql);
+			String sql="UPDATE book SET book_loc = ? WHERE book_name=?";
 			
-			while(res.next()) {
-				int bookId=res.getInt("book_id");
-				String bookName=res.getString("book_name");
-				String bookLoc=res.getString("book_loc");
-				
-				out.print("bookId : "+bookId+", ");
-				out.print("bookName : "+bookName+", ");
-				out.print("bookLoc : "+bookLoc+"</br>");
+			pstmt=con.prepareStatement(sql);
+			pstmt.setNString(1, "221-2121");
+			pstmt.setNString(2, "book1");
+			
+			int result=pstmt.executeUpdate();
+			
+			if(result ==1) {
+				out.print("UPDATE success!!");
+			}else {
+				out.print("UPDATE fail!!");
 			}
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}finally {
 			try {
-				if(stmt!=null) stmt.close();
+				if(pstmt!=null) pstmt.close();
 				if(con!=null) con.close();
 			}catch(Exception e2) {
 				e2.printStackTrace();
@@ -64,5 +66,4 @@ public class BookServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-
 }

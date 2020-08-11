@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 public class NewBook extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=UTF-8");
+		request.setCharacterEncoding("UTF-8");
+    	response.setContentType("text/html; charset=UTF-8");
 		
 		PrintWriter out = response.getWriter();
 		
@@ -33,13 +33,17 @@ public class NewBook extends HttpServlet {
 		Connection con=null;
 		Statement stmt=null;
 		
+		System.out.print(bookName);
+		
 		try {
 			Class.forName(driver);
 			
 			con=DriverManager.getConnection(url,id,pw);
 			stmt=con.createStatement();
 			String sql="INSERT INTO book(book_id,book_name,book_loc)"
-					+" VALUES (BOOK_SEQ.NAXTVAL, '"+bookName+"', '"+bookLoc+"')";
+					+" VALUES (BOOK_SEQ.NEXTVAL, '"+bookName+"', '"+bookLoc+"')";
+			
+			
 			
 			int result=stmt.executeUpdate(sql);
 			
